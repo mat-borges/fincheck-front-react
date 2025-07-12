@@ -1,18 +1,16 @@
-import Filters from './features/filters';
 import Footer from './components/Footer';
 import Header from './components/Header';
 import Transactions from './features/transactions';
 
 function App() {
     return (
-        <main>
+        <div className="min-h-screen bg-background flex flex-col">
             <Header />
-            <Filters />
-            <h1>Welcome to FinCheck</h1>
-            <p>This is your personal finance management application.</p>
-            <Transactions />
+            <main className="flex-1 flex items-top justify-center p-4">
+                <Transactions />
+            </main>
             <Footer />
-        </main>
+        </div>
     );
 }
 
