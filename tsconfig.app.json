@@ -10,6 +10,10 @@
         "outDir": "build",
         "rootDir": "src",
         "composite": true,
+        "baseUrl": ".",
+        "paths": {
+            "@/*": ["./src/*"]
+        },
 
         /* Bundler mode */
         "allowJs": true,
