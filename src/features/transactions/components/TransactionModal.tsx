@@ -36,7 +36,7 @@ export default function TransactionModal({
                 </DialogHeader>
                 <TransactionForm onSubmit={() => onOpenChange(false)} />
                 <DialogFooter>
-                    <Button variant="destructive" onClick={() => onOpenChange(false)}>
+                    <Button variant="outline" onClick={() => onOpenChange(false)}>
                         Cancelar
                     </Button>
                 </DialogFooter>

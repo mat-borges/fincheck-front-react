@@ -8,6 +8,7 @@ import { TransactionCategory } from '@/types/TransactionCategory';
 import type { TransactionFormData } from '@/types/Transactions';
 import { useState, type ChangeEvent } from 'react';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Textarea } from '@/components/ui/textarea';
 
 export default function TransactionForm({ onSubmit }: { onSubmit: (data: TransactionFormData) => void }) {
     const [formData, setFormData] = useState<TransactionFormData>({
@@ -19,7 +20,7 @@ export default function TransactionForm({ onSubmit }: { onSubmit: (data: Transac
         date: new Date().toISOString().split('T')[0],
     });
 
-    function handleChange(event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
+    function handleChange(event: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) {
         const { name, value } = event.target;
         setFormData({ ...formData, [name]: name === 'amount' ? Number(value) : value });
     }
@@ -32,38 +33,68 @@ export default function TransactionForm({ onSubmit }: { onSubmit: (data: Transac
             }}
             className="space-y-4"
         >
-            <div>
+            <div className="space-y-1.5">
                 <Label htmlFor="title">Título</Label>
-                <Input id="title" name="title" value={formData.title} onChange={handleChange} required />
+                <Input
+                    id="title"
+                    name="title"
+                    value={formData.title}
+                    onChange={handleChange}
+                    className="border border-border"
+                    required
+                />
             </div>
 
-            <div>
+            <div className="space-y-1.5">
+                <Label htmlFor="description">Descrição</Label>
+                <Textarea
+                    id="description"
+                    name="description"
+                    value={formData.description}
+                    onChange={handleChange}
+                    className="border border-border"
+                />
+            </div>
+
+            <div className="space-y-1.5">
                 <Label htmlFor="type">Tipo</Label>
                 <RadioGroup
                     defaultValue={formData.type}
                     onValueChange={(value) => setFormData({ ...formData, type: value as 'income' | 'expense' })}
-                    className="flex gap-4"
+                    className="flex items-center gap-6 p-2"
                     id="type"
                 >
-                    <RadioGroupItem value="income" id="income" />
+                    <RadioGroupItem
+                        value="income"
+                        id="income"
+                        className="border border-primary data-[state=checked]:border-primary data-[state=checked]:bg-primary"
+                    />
                     <Label htmlFor="income">Entrada</Label>
-                    <RadioGroupItem value="expanse" id="expanse" />
-                    <Label htmlFor="expanse">Saída</Label>
+                    <RadioGroupItem
+                        value="expense"
+                        id="expense"
+                        className="border border-primary data-[state=checked]:border-primary data-[state=checked]:bg-primary"
+                    />
+                    <Label htmlFor="expense">Saída</Label>
                 </RadioGroup>
             </div>
 
-            <div>
+            <div className="space-y-1.5">
                 <Label htmlFor="category">Categoria</Label>
                 <Select
                     defaultValue={formData.category}
                     onValueChange={(value) => setFormData({ ...formData, category: value as TransactionCategory })}
                 >
-                    <SelectTrigger>
+                    <SelectTrigger className="border border-border">
                         <SelectValue placeholder="Selecione uma categoria" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="border border-border">
                         {Object.entries(TRANSACTION_CATEGORIES).map(([key, value]) => (
-                            <SelectItem key={key} value={key}>
+                            <SelectItem
+                                key={key}
+                                value={key}
+                                className="cursor-pointer hover:bg-accent hover:text-accent-foreground transition-colors"
+                            >
                                 {value.label}
                             </SelectItem>
                         ))}
@@ -71,7 +102,7 @@ export default function TransactionForm({ onSubmit }: { onSubmit: (data: Transac
                 </Select>
             </div>
 
-            <div>
+            <div className="space-y-1.5">
                 <Label htmlFor="amount">Valor (R$)</Label>
                 <Input
                     type="number"
@@ -81,13 +112,22 @@ export default function TransactionForm({ onSubmit }: { onSubmit: (data: Transac
                     name="amount"
                     value={formData.amount}
                     onChange={handleChange}
+                    className="border border-border"
                     required
                 />
             </div>
 
-            <div>
+            <div className="space-y-1.5">
                 <Label htmlFor="date">Data</Label>
-                <Input type="date" id="date" name="date" value={formData.date} onChange={handleChange} required />
+                <Input
+                    type="date"
+                    id="date"
+                    name="date"
+                    value={formData.date}
+                    onChange={handleChange}
+                    className="border border-border"
+                    required
+                />
             </div>
 
             <Button type="submit" className="w-full">

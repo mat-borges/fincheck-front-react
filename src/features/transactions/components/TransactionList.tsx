@@ -1,5 +1,3 @@
-import { Button } from '@/components/ui/button';
-import { PlusIcon } from '@heroicons/react/16/solid';
 import TransactionItem from './TransactionItem';
 import TransactionModal from './TransactionModal';
 import { transactions } from '../../../mockData';
