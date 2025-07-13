@@ -70,7 +70,7 @@ export const transactions: Transaction[] = [
         description: 'Teste de descrição',
         type: 'expense',
         category: TransactionCategory.Outros,
-        amount: 3000,
+        amount: 1000,
         date: '2023-10-12',
         createdAt: '2023-10-12T14:30:00Z',
         updatedAt: '2023-10-12T14:30:00Z',
