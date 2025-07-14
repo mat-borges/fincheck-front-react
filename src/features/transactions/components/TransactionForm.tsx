@@ -8,6 +8,8 @@ import type { Category, Transaction, TransactionFormData } from '@/types/Transac
 import { useEffect, useState, type ChangeEvent, type FormEvent } from 'react';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Textarea } from '@/components/ui/textarea';
+import { toast } from 'sonner';
+import LoadingSpinner from '@/components/Loader';
 
 export default function TransactionForm({
     onSubmit,
@@ -19,6 +21,7 @@ export default function TransactionForm({
     setTransactions: React.Dispatch<React.SetStateAction<Transaction[]>>;
 }) {
     const [categories, setCategories] = useState<Category[]>([]);
+    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
         const request = axios.get<Category[]>('http://localhost:3000/categories');
@@ -41,16 +44,18 @@ export default function TransactionForm({
 
     function newTransaction(e: FormEvent<HTMLFormElement>) {
         e.preventDefault();
-        console.log(formData);
+        setIsLoading(true);
         axios
             .post('http://localhost:3000/transactions', formData)
             .then((res) => {
                 setTransactions([...transactions, res.data as Transaction]);
                 onSubmit();
-                console.log(res);
+                toast.success('Transação criada com sucesso');
+                setIsLoading(false);
             })
             .catch((err) => {
                 console.error('Erro ao salvar transação:', err?.response?.data ?? err.message);
+                setIsLoading(false);
             });
     }
 
@@ -154,7 +159,7 @@ export default function TransactionForm({
             </div>
 
             <Button type="submit" className="w-full">
-                Salvar transação
+                {isLoading ? <LoadingSpinner /> : 'Salvar transação'}
             </Button>
         </form>
     );

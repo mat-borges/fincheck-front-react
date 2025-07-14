@@ -1,6 +1,7 @@
 import type { Category, Transaction } from '@/types/Transactions';
 import { useEffect, useState } from 'react';
 
+import LoadingSpinner from '@/components/Loader';
 import SummaryCard from '../summary';
 import type { TransactionCategory } from '@/types/TransactionCategory';
 import TransactionList from './components/TransactionList';
@@ -12,10 +13,12 @@ export default function Transactions() {
     const [transactions, setTransactions] = useState<Transaction[]>([]);
     const [modalOpen, setModalOpen] = useState(false);
     const [categoryMap, setCategoryMap] = useState<Record<string, TransactionCategory>>({});
+    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
         async function loadInitialData() {
             try {
+                setIsLoading(true);
                 const [transactionsRes, categoriesRes] = await Promise.all([
                     axios.get<Transaction[]>('http://localhost:3000/transactions'),
                     axios.get<Category[]>('http://localhost:3000/categories'),
@@ -24,8 +27,10 @@ export default function Transactions() {
                 const map = createCategoryIdToSlugMap(categoriesRes.data);
                 setCategoryMap(map as Record<string, TransactionCategory>);
                 setTransactions(transactionsRes.data);
+                setIsLoading(false);
             } catch (err) {
                 console.error('Erro ao buscar dados:', err);
+                setIsLoading(false);
             }
         }
 
@@ -38,7 +43,8 @@ export default function Transactions() {
                 <h1 className="text-3xl font-bold text-textPrimary">Bem-vindo ao FinCheck</h1>
                 <p className="text-textSecondary">Gerencie suas finanças com clareza.</p>
             </div>
-            <SummaryCard transactions={transactions} />
+
+            {isLoading ? <LoadingSpinner /> : <SummaryCard transactions={transactions} />}
 
             <section className="bg-white rounded-xl p-4 shadow-md">
                 <div className="flex justify-between items-center mb-4">
@@ -51,7 +57,11 @@ export default function Transactions() {
                     />
                 </div>
 
-                <TransactionList transactions={transactions} categoryMap={categoryMap} />
+                {isLoading ? (
+                    <LoadingSpinner />
+                ) : (
+                    <TransactionList transactions={transactions} categoryMap={categoryMap} />
+                )}
             </section>
         </div>
     );
