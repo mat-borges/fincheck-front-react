@@ -10,14 +10,19 @@ import {
 
 import { Button } from '@/components/ui/button';
 import { PlusIcon } from 'lucide-react';
+import type { Transaction } from '@/types/Transactions';
 import TransactionForm from './TransactionForm';
 
 export default function TransactionModal({
     open,
     onOpenChange,
+    transactions,
+    setTransactions,
 }: {
     open: boolean;
     onOpenChange: (open: boolean) => void;
+    transactions: Transaction[];
+    setTransactions: React.Dispatch<React.SetStateAction<Transaction[]>>;
 }) {
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
@@ -34,7 +39,11 @@ export default function TransactionModal({
                     <DialogTitle>Nova Transação</DialogTitle>
                     <DialogDescription>Preencha os campos abaixo para adicionar uma nova transação.</DialogDescription>
                 </DialogHeader>
-                <TransactionForm onSubmit={() => onOpenChange(false)} />
+                <TransactionForm
+                    onSubmit={() => onOpenChange(false)}
+                    transactions={transactions}
+                    setTransactions={setTransactions}
+                />
                 <DialogFooter>
                     <Button variant="outline" onClick={() => onOpenChange(false)}>
                         Cancelar

@@ -1,21 +1,35 @@
+import axios from 'axios';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { TRANSACTION_CATEGORIES } from '@/utils/transactionCategories';
-import { TransactionCategory } from '@/types/TransactionCategory';
-import type { TransactionFormData } from '@/types/Transactions';
-import { useState, type ChangeEvent } from 'react';
+import type { Category, Transaction, TransactionFormData } from '@/types/Transactions';
+import { useEffect, useState, type ChangeEvent, type FormEvent } from 'react';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Textarea } from '@/components/ui/textarea';
 
-export default function TransactionForm({ onSubmit }: { onSubmit: (data: TransactionFormData) => void }) {
+export default function TransactionForm({
+    onSubmit,
+    transactions,
+    setTransactions,
+}: {
+    onSubmit: () => void;
+    transactions: Transaction[];
+    setTransactions: React.Dispatch<React.SetStateAction<Transaction[]>>;
+}) {
+    const [categories, setCategories] = useState<Category[]>([]);
+
+    useEffect(() => {
+        const request = axios.get<Category[]>('http://localhost:3000/categories');
+        request.then((res) => setCategories(res.data)).catch((err) => console.log(err));
+    }, []);
+
     const [formData, setFormData] = useState<TransactionFormData>({
         title: '',
         description: '',
         type: 'expense',
-        category: TransactionCategory.Outros,
+        categoryId: '',
         amount: 0,
         date: new Date().toISOString().split('T')[0],
     });
@@ -25,14 +39,23 @@ export default function TransactionForm({ onSubmit }: { onSubmit: (data: Transac
         setFormData({ ...formData, [name]: name === 'amount' ? Number(value) : value });
     }
 
+    function newTransaction(e: FormEvent<HTMLFormElement>) {
+        e.preventDefault();
+        console.log(formData);
+        axios
+            .post('http://localhost:3000/transactions', formData)
+            .then((res) => {
+                setTransactions([...transactions, res.data as Transaction]);
+                onSubmit();
+                console.log(res);
+            })
+            .catch((err) => {
+                console.error('Erro ao salvar transação:', err?.response?.data ?? err.message);
+            });
+    }
+
     return (
-        <form
-            onSubmit={(e) => {
-                e.preventDefault();
-                onSubmit(formData);
-            }}
-            className="space-y-4"
-        >
+        <form onSubmit={newTransaction} className="space-y-4">
             <div className="space-y-1.5">
                 <Label htmlFor="title">Título</Label>
                 <Input
@@ -82,20 +105,20 @@ export default function TransactionForm({ onSubmit }: { onSubmit: (data: Transac
             <div className="space-y-1.5">
                 <Label htmlFor="category">Categoria</Label>
                 <Select
-                    defaultValue={formData.category}
-                    onValueChange={(value) => setFormData({ ...formData, category: value as TransactionCategory })}
+                    defaultValue={formData.categoryId}
+                    onValueChange={(value) => setFormData({ ...formData, categoryId: value })}
                 >
                     <SelectTrigger className="border border-border">
                         <SelectValue placeholder="Selecione uma categoria" />
                     </SelectTrigger>
                     <SelectContent className="border border-border">
-                        {Object.entries(TRANSACTION_CATEGORIES).map(([key, value]) => (
+                        {categories.map((category) => (
                             <SelectItem
-                                key={key}
-                                value={key}
+                                key={category.id}
+                                value={category.id}
                                 className="cursor-pointer hover:bg-accent hover:text-accent-foreground transition-colors"
                             >
-                                {value.label}
+                                {category.name}
                             </SelectItem>
                         ))}
                     </SelectContent>

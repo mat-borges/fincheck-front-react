@@ -1,3 +1,5 @@
+// utils/categoryMap.ts
+
 import {
     AcademicCapIcon,
     BuildingStorefrontIcon,
@@ -22,3 +24,24 @@ export const TRANSACTION_CATEGORIES = {
 } as const;
 
 export type TransactionCategory = keyof typeof TRANSACTION_CATEGORIES;
+
+export function createCategoryIdToSlugMap(
+    categoriesFromAPI: { id: string; name: string }[],
+): Record<string, TransactionCategory> {
+    const map: Record<string, TransactionCategory> = {};
+
+    for (const cat of categoriesFromAPI) {
+        const slug = cat.name
+            .toLowerCase()
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '');
+
+        if (slug in TRANSACTION_CATEGORIES) {
+            map[cat.id] = slug as TransactionCategory;
+        } else {
+            map[cat.id] = 'outros';
+        }
+    }
+
+    return map;
+}

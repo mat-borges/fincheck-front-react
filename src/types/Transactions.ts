@@ -17,7 +17,12 @@ export type TransactionFormData = {
     title: string;
     description?: string;
     type: 'income' | 'expense';
-    category?: TransactionCategory;
+    categoryId: string;
     amount: number;
     date: string;
+};
+
+export type Category = {
+    id: string;
+    name: TransactionCategory;
 };

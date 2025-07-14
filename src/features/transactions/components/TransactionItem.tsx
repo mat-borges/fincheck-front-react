@@ -1,16 +1,25 @@
 import { CalendarDaysIcon, PencilSquareIcon, TrashIcon } from '@heroicons/react/16/solid';
 import { formatCurrency, normalizeCategory } from '../../../utils/format';
 
-import { TRANSACTION_CATEGORIES } from '../../../utils/transactionCategories';
+import { TRANSACTION_CATEGORIES } from '@/utils/categoryMap';
 import type { Transaction } from '../../../mockData';
+import type { TransactionCategory } from '@/types/TransactionCategory';
 
-export default function TransactionItem({ transaction }: { transaction: Transaction }) {
+export default function TransactionItem({
+    transaction,
+    categoryMap,
+}: {
+    transaction: Transaction;
+    categoryMap: Record<string, TransactionCategory>;
+}) {
     const isExpense = transaction.type === 'expense';
 
-    const categoryKey = transaction.category ? normalizeCategory(transaction.category) : undefined;
-    const categoryData = categoryKey
-        ? TRANSACTION_CATEGORIES[categoryKey as keyof typeof TRANSACTION_CATEGORIES]
-        : null;
+    const rawCategory = categoryMap[transaction.categoryId] ?? 'outros';
+    const categoryKey = normalizeCategory(rawCategory);
+    const categoryData =
+        categoryKey in TRANSACTION_CATEGORIES
+            ? TRANSACTION_CATEGORIES[categoryKey as keyof typeof TRANSACTION_CATEGORIES]
+            : TRANSACTION_CATEGORIES['outros'];
     const CategoryIcon = categoryData?.icon;
 
     return (
