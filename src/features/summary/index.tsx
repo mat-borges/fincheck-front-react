@@ -9,8 +9,8 @@ export default function SummaryCard({ transactions }: Props) {
     const expenses = transactions.filter((t) => t.type === 'expense');
     const incomes = transactions.filter((t) => t.type === 'income');
 
-    const totalExpenses = expenses.reduce((acc, t) => acc + t.amount, 0);
-    const totalIncomes = incomes.reduce((acc, t) => acc + t.amount, 0);
+    const totalExpenses = expenses.reduce((acc, t) => acc + Number(t.amount), 0);
+    const totalIncomes = incomes.reduce((acc, t) => acc + Number(t.amount), 0);
 
     const balance = totalIncomes - totalExpenses;
 
