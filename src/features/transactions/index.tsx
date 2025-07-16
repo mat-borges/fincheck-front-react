@@ -8,6 +8,7 @@ import TransactionList from './components/TransactionList';
 import TransactionModal from './components/TransactionModal';
 import axios from 'axios';
 import { createCategoryIdToSlugMap } from '@/utils/categoryMap';
+import fincheckApi from '@/api/fincheckApi';
 
 export default function Transactions() {
     const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -20,8 +21,8 @@ export default function Transactions() {
             try {
                 setIsLoading(true);
                 const [transactionsRes, categoriesRes] = await Promise.all([
-                    axios.get<Transaction[]>('http://localhost:3000/transactions'),
-                    axios.get<Category[]>('http://localhost:3000/categories'),
+                    fincheckApi.get<Transaction[]>('http://localhost:3000/transactions'),
+                    fincheckApi.get<Category[]>('http://localhost:3000/categories'),
                 ]);
 
                 const map = createCategoryIdToSlugMap(categoriesRes.data);
@@ -39,11 +40,6 @@ export default function Transactions() {
 
     return (
         <div className="w-full max-w-4xl mx-auto p-6 bg-white rounded-xl shadow space-y-6">
-            <div className="text-center space-y-2 mb-6">
-                <h1 className="text-3xl font-bold text-textPrimary">Bem-vindo ao FinCheck</h1>
-                <p className="text-textSecondary">Gerencie suas finanças com clareza.</p>
-            </div>
-
             {isLoading ? <LoadingSpinner /> : <SummaryCard transactions={transactions} />}
 
             <section className="bg-white rounded-xl p-4 shadow-md">

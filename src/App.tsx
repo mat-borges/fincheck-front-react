@@ -1,29 +1,29 @@
 import { BrowserRouter, Route, Routes } from 'react-router';
 
-import Footer from './components/Footer';
-import Header from './components/Header';
-import { Toaster } from './components/ui/sonner';
-import Transactions from './features/transactions';
+import { AuthProvider } from './context/auth/AuthProvider';
+import Dashboard from './pages/Dashboard';
+import Home from './pages/Home';
+import Login from './pages/Login';
+import ProtectedRoute from './routes/ProtectedRoutes';
 
 function App() {
     return (
-        <BrowserRouter>
-            <Routes>
-                <Route
-                    path="/"
-                    element={
-                        <div className="min-h-screen bg-background flex flex-col">
-                            <Toaster />
-                            <Header />
-                            <main className="flex-1 flex items-top justify-center p-4">
-                                <Transactions />
-                            </main>
-                            <Footer />
-                        </div>
-                    }
-                />
-            </Routes>
-        </BrowserRouter>
+        <AuthProvider>
+            <BrowserRouter>
+                <Routes>
+                    <Route path="/" element={<Home />} />
+                    <Route path="/login" element={<Login />} />
+                    <Route
+                        path="/dashboard"
+                        element={
+                            <ProtectedRoute>
+                                <Dashboard />
+                            </ProtectedRoute>
+                        }
+                    />
+                </Routes>
+            </BrowserRouter>
+        </AuthProvider>
     );
 }
 

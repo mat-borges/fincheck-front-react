@@ -10,6 +10,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
 import LoadingSpinner from '@/components/Loader';
+import fincheckApi from '@/api/fincheckApi';
 
 export default function TransactionForm({
     onSubmit,
@@ -24,7 +25,8 @@ export default function TransactionForm({
     const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
-        const request = axios.get<Category[]>('http://localhost:3000/categories');
+        const request = fincheckApi.get<Category[]>('http://localhost:3000/categories');
+
         request.then((res) => setCategories(res.data)).catch((err) => console.log(err));
     }, []);
 
@@ -45,7 +47,7 @@ export default function TransactionForm({
     function newTransaction(e: FormEvent<HTMLFormElement>) {
         e.preventDefault();
         setIsLoading(true);
-        axios
+        fincheckApi
             .post('http://localhost:3000/transactions', formData)
             .then((res) => {
                 setTransactions([...transactions, res.data as Transaction]);
