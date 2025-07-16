@@ -27,9 +27,9 @@ export default function Transactions() {
                 const map = createCategoryIdToSlugMap(categoriesRes.data);
                 setCategoryMap(map as Record<string, TransactionCategory>);
                 setTransactions(transactionsRes.data);
-                setIsLoading(false);
             } catch (err) {
                 console.error('Erro ao buscar dados:', err);
+            } finally {
                 setIsLoading(false);
             }
         }
