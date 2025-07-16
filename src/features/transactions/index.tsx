@@ -21,8 +21,8 @@ export default function Transactions() {
             try {
                 setIsLoading(true);
                 const [transactionsRes, categoriesRes] = await Promise.all([
-                    fincheckApi.get<Transaction[]>('http://localhost:3000/transactions'),
-                    fincheckApi.get<Category[]>('http://localhost:3000/categories'),
+                    fincheckApi.get<Transaction[]>('/transactions'),
+                    fincheckApi.get<Category[]>('/categories'),
                 ]);
 
                 const map = createCategoryIdToSlugMap(categoriesRes.data);

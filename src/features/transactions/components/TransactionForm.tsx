@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 import { Button } from '@/components/ui/button';
@@ -48,7 +47,7 @@ export default function TransactionForm({
         e.preventDefault();
         setIsLoading(true);
         fincheckApi
-            .post('http://localhost:3000/transactions', formData)
+            .post('/transactions', formData)
             .then((res) => {
                 setTransactions([...transactions, res.data as Transaction]);
                 onSubmit();
