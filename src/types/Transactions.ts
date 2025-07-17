@@ -2,11 +2,11 @@ import type { TransactionCategory } from './TransactionCategory';
 
 export type Transaction = {
     [x: string]: any;
-    id: number;
+    id: string;
     title: string;
     description?: string | '';
     type: 'income' | 'expense';
-    category?: TransactionCategory;
+    category: Category;
     amount: number;
     date: string;
     createdAt: string;

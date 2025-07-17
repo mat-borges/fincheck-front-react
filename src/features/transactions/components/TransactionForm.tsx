@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import type { Category, Transaction, TransactionFormData } from '@/types/Transactions';
-import { useEffect, useState, type ChangeEvent, type FormEvent } from 'react';
+import { useState, type ChangeEvent, type FormEvent } from 'react';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
@@ -15,19 +15,14 @@ export default function TransactionForm({
     onSubmit,
     transactions,
     setTransactions,
+    categories,
 }: {
     onSubmit: () => void;
     transactions: Transaction[];
     setTransactions: React.Dispatch<React.SetStateAction<Transaction[]>>;
+    categories: Category[];
 }) {
-    const [categories, setCategories] = useState<Category[]>([]);
     const [isLoading, setIsLoading] = useState(false);
-
-    useEffect(() => {
-        const request = fincheckApi.get<Category[]>('http://localhost:3000/categories');
-
-        request.then((res) => setCategories(res.data)).catch((err) => console.log(err));
-    }, []);
 
     const [formData, setFormData] = useState<TransactionFormData>({
         title: '',
@@ -46,6 +41,7 @@ export default function TransactionForm({
     function newTransaction(e: FormEvent<HTMLFormElement>) {
         e.preventDefault();
         setIsLoading(true);
+
         fincheckApi
             .post('/transactions', formData)
             .then((res) => {
@@ -159,7 +155,7 @@ export default function TransactionForm({
                 />
             </div>
 
-            <Button type="submit" className="w-full">
+            <Button type="submit" className={`w-full ${isLoading ? 'disabled' : ''} `}>
                 {isLoading ? <LoadingSpinner /> : 'Salvar transação'}
             </Button>
         </form>

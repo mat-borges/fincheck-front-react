@@ -1,3 +1,4 @@
+import type { Category, Transaction } from '@/types/Transactions';
 import {
     Dialog,
     DialogContent,
@@ -10,7 +11,6 @@ import {
 
 import { Button } from '@/components/ui/button';
 import { PlusIcon } from 'lucide-react';
-import type { Transaction } from '@/types/Transactions';
 import TransactionForm from './TransactionForm';
 
 export default function TransactionModal({
@@ -18,11 +18,13 @@ export default function TransactionModal({
     onOpenChange,
     transactions,
     setTransactions,
+    categories,
 }: {
     open: boolean;
     onOpenChange: (open: boolean) => void;
     transactions: Transaction[];
     setTransactions: React.Dispatch<React.SetStateAction<Transaction[]>>;
+    categories: Category[];
 }) {
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
@@ -43,6 +45,7 @@ export default function TransactionModal({
                     onSubmit={() => onOpenChange(false)}
                     transactions={transactions}
                     setTransactions={setTransactions}
+                    categories={categories}
                 />
                 <DialogFooter>
                     <Button variant="outline" onClick={() => onOpenChange(false)}>

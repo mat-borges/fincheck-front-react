@@ -1,26 +1,39 @@
 import { CalendarDaysIcon, PencilSquareIcon, TrashIcon } from '@heroicons/react/16/solid';
+import type { Category, Transaction } from '@/types/Transactions';
 import { formatCurrency, normalizeCategory } from '../../../utils/format';
 
 import { TRANSACTION_CATEGORIES } from '@/utils/categoryMap';
-import type { Transaction } from '../../../mockData';
-import type { TransactionCategory } from '@/types/TransactionCategory';
 
 export default function TransactionItem({
     transaction,
-    categoryMap,
+    categories,
 }: {
     transaction: Transaction;
-    categoryMap: Record<string, TransactionCategory>;
+    categories: Category[];
 }) {
     const isExpense = transaction.type === 'expense';
 
-    const rawCategory = categoryMap[transaction.categoryId] ?? 'outros';
-    const categoryKey = normalizeCategory(rawCategory);
-    const categoryData =
-        categoryKey in TRANSACTION_CATEGORIES
-            ? TRANSACTION_CATEGORIES[categoryKey as keyof typeof TRANSACTION_CATEGORIES]
-            : TRANSACTION_CATEGORIES['outros'];
-    const CategoryIcon = categoryData?.icon;
+    const category = categories.find((cat) => cat.id === transaction.categoryId);
+
+    let CategoryIcon;
+
+    if (category) {
+        const categoryKey = normalizeCategory(category.name);
+        const categoryData =
+            categoryKey in TRANSACTION_CATEGORIES
+                ? TRANSACTION_CATEGORIES[categoryKey as keyof typeof TRANSACTION_CATEGORIES]
+                : TRANSACTION_CATEGORIES['outros'];
+
+        CategoryIcon = categoryData?.icon;
+    }
+
+    function handleEdit(id: string) {
+        console.log(id);
+    }
+
+    function handleDelete(id: string) {
+        console.log(id);
+    }
 
     return (
         <li className="flex justify-between items-start p-4 rounded-md bg-gray-50 border hover:shadow-sm transition">
@@ -43,7 +56,7 @@ export default function TransactionItem({
                 </span>
                 <div>
                     <button
-                        onClick={() => console.log('Editar', transaction.id)}
+                        onClick={() => handleEdit(transaction.id)}
                         className="text-gray-400 hover:text-blue-600 transition"
                         title="Editar transação"
                     >
@@ -51,7 +64,7 @@ export default function TransactionItem({
                     </button>
 
                     <button
-                        onClick={() => console.log('Deletar', transaction.id)}
+                        onClick={() => handleDelete(transaction.id)}
                         className="text-gray-400 hover:text-red-600 transition"
                         title="Excluir transação"
                     >

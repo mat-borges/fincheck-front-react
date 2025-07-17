@@ -3,17 +3,14 @@ import { useEffect, useState } from 'react';
 
 import LoadingSpinner from '@/components/Loader';
 import SummaryCard from '../summary';
-import type { TransactionCategory } from '@/types/TransactionCategory';
 import TransactionList from './components/TransactionList';
 import TransactionModal from './components/TransactionModal';
-import axios from 'axios';
-import { createCategoryIdToSlugMap } from '@/utils/categoryMap';
 import fincheckApi from '@/api/fincheckApi';
 
 export default function Transactions() {
     const [transactions, setTransactions] = useState<Transaction[]>([]);
     const [modalOpen, setModalOpen] = useState(false);
-    const [categoryMap, setCategoryMap] = useState<Record<string, TransactionCategory>>({});
+    const [categories, setCategories] = useState<Category[]>([]);
     const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
@@ -25,8 +22,7 @@ export default function Transactions() {
                     fincheckApi.get<Category[]>('/categories'),
                 ]);
 
-                const map = createCategoryIdToSlugMap(categoriesRes.data);
-                setCategoryMap(map as Record<string, TransactionCategory>);
+                setCategories(categoriesRes.data);
                 setTransactions(transactionsRes.data);
             } catch (err) {
                 console.error('Erro ao buscar dados:', err);
@@ -50,13 +46,14 @@ export default function Transactions() {
                         onOpenChange={setModalOpen}
                         transactions={transactions}
                         setTransactions={setTransactions}
+                        categories={categories}
                     />
                 </div>
 
                 {isLoading ? (
                     <LoadingSpinner />
                 ) : (
-                    <TransactionList transactions={transactions} categoryMap={categoryMap} />
+                    <TransactionList transactions={transactions} categories={categories} />
                 )}
             </section>
         </div>
