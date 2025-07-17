@@ -5,7 +5,6 @@ import { useAuth } from '@/context/auth/useAuth';
 
 export default function ProtectedRoute({ children }: { children: JSX.Element }) {
     const { user, isLoading } = useAuth();
-    console.log(user);
 
     if (isLoading) return <LoadingSpinner />;
 

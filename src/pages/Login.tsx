@@ -21,11 +21,9 @@ export default function Login() {
         try {
             setIsLoading(true);
             const res = await fincheckApi.post<{ accessToken: string }>('/auth/signin', formData);
-            // console.log(res.data.accessToken);
             login(res.data?.accessToken);
             navigate('/dashboard');
         } catch (err) {
-            console.log(err);
             console.error('Erro ao realizar Login!', err);
         } finally {
             setIsLoading(false);
