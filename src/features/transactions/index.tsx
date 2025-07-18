@@ -1,7 +1,9 @@
 import type { Category, Transaction } from '@/types/Transactions';
 import { useEffect, useState } from 'react';
 
+import { Button } from '@/components/ui/button';
 import LoadingSpinner from '@/components/Loader';
+import { PlusIcon } from 'lucide-react';
 import SummaryCard from '../summary';
 import TransactionList from './components/TransactionList';
 import TransactionModal from './components/TransactionModal';
@@ -44,9 +46,13 @@ export default function Transactions() {
                     <TransactionModal
                         open={modalOpen}
                         onOpenChange={setModalOpen}
-                        transactions={transactions}
                         setTransactions={setTransactions}
                         categories={categories}
+                        triggerButton={
+                            <Button className="flex items-center gap-x-2 hover:bg-lime-700 text-white shadow transition cursor-pointer">
+                                <PlusIcon className="w-5 h-5" />
+                            </Button>
+                        }
                     />
                 </div>
 

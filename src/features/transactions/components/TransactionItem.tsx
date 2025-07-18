@@ -1,10 +1,11 @@
 import { CalendarDays, SquarePen, Trash } from 'lucide-react';
 import type { Category, Transaction } from '@/types/Transactions';
-import type { Dispatch, SetStateAction } from 'react';
+import { useState, type Dispatch, type SetStateAction } from 'react';
 import { formatCurrency, normalizeCategory } from '../../../utils/format';
 
 import { ConfirmDialog } from '@/components/confirmDialog';
 import { TRANSACTION_CATEGORIES } from '@/utils/categoryMap';
+import TransactionModal from './TransactionModal';
 import fincheckApi from '@/api/fincheckApi';
 import { toast } from 'sonner';
 
@@ -18,6 +19,7 @@ export default function TransactionItem({
     categories: Category[];
 }) {
     const isExpense = transaction.type === 'expense';
+    const [modalOpen, setModalOpen] = useState(false);
 
     const category = categories.find((cat) => cat.id === transaction.categoryId);
 
@@ -31,10 +33,6 @@ export default function TransactionItem({
                 : TRANSACTION_CATEGORIES['outros'];
 
         CategoryIcon = categoryData?.icon;
-    }
-
-    function handleEdit(id: string) {
-        console.log(id);
     }
 
     function handleDelete(id: string) {
@@ -71,13 +69,18 @@ export default function TransactionItem({
                     {isExpense ? '-' : '+'} {formatCurrency(transaction.amount)}
                 </span>
                 <div>
-                    <button
-                        onClick={() => handleEdit(transaction.id)}
-                        className="text-gray-400 hover:text-blue-600 transition"
-                        title="Editar transação"
-                    >
-                        <SquarePen className="w-5 h-5" />
-                    </button>
+                    <TransactionModal
+                        open={modalOpen}
+                        onOpenChange={setModalOpen}
+                        setTransactions={setTransactions}
+                        categories={categories}
+                        transactionToEdit={transaction}
+                        triggerButton={
+                            <button className="text-gray-400 hover:text-blue-600 transition" title="Editar transação">
+                                <SquarePen className="w-5 h-5" />
+                            </button>
+                        }
+                    />
 
                     <ConfirmDialog
                         title="Tem certeza que deseja deletar essa transação?"

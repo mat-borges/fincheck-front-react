@@ -13,24 +13,24 @@ import fincheckApi from '@/api/fincheckApi';
 
 export default function TransactionForm({
     onSubmit,
-    transactions,
     setTransactions,
     categories,
+    transactionToEdit,
 }: {
     onSubmit: () => void;
-    transactions: Transaction[];
     setTransactions: React.Dispatch<React.SetStateAction<Transaction[]>>;
     categories: Category[];
+    transactionToEdit?: Transaction;
 }) {
     const [isLoading, setIsLoading] = useState(false);
 
     const [formData, setFormData] = useState<TransactionFormData>({
-        title: '',
-        description: '',
-        type: 'expense',
-        categoryId: '',
-        amount: 0,
-        date: new Date().toISOString().split('T')[0],
+        title: transactionToEdit ? transactionToEdit.title : '',
+        description: transactionToEdit ? transactionToEdit.description : '',
+        type: transactionToEdit ? transactionToEdit.type : 'expense',
+        categoryId: transactionToEdit ? transactionToEdit.categoryId : '',
+        amount: transactionToEdit ? transactionToEdit.amount : 0,
+        date: transactionToEdit ? transactionToEdit.date : new Date().toISOString().split('T')[0],
     });
 
     function handleChange(event: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) {
@@ -42,16 +42,27 @@ export default function TransactionForm({
         e.preventDefault();
         setIsLoading(true);
 
-        fincheckApi
-            .post('/transactions', formData)
+        const method = transactionToEdit ? 'put' : 'post';
+        const url = transactionToEdit ? `/transactions/${transactionToEdit.id}` : '/transactions';
+
+        fincheckApi[method](url, formData)
             .then((res) => {
-                setTransactions([...transactions, res.data as Transaction]);
+                const updated = res.data as Transaction;
+
+                if (transactionToEdit) {
+                    setTransactions((transactions) => transactions.map((t) => (t.id === updated.id ? updated : t)));
+                    toast.success('Transação atualizada com sucesso 📝');
+                } else {
+                    setTransactions((transactions) => [...transactions, updated]);
+                    toast.success(' Transação criada com sucesso 👍🏻');
+                }
+
                 onSubmit();
-                toast.success(' Transação criada com sucesso 👍🏻');
                 setIsLoading(false);
             })
             .catch((err) => {
                 console.error('Erro ao salvar transação:', err?.response?.data ?? err.message);
+                toast.error('Erro ao salvar transação');
                 setIsLoading(false);
             });
     }
