@@ -53,7 +53,11 @@ export default function Transactions() {
                 {isLoading ? (
                     <LoadingSpinner />
                 ) : (
-                    <TransactionList transactions={transactions} categories={categories} />
+                    <TransactionList
+                        transactions={transactions}
+                        setTransactions={setTransactions}
+                        categories={categories}
+                    />
                 )}
             </section>
         </div>

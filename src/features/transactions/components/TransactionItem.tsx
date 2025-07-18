@@ -1,14 +1,20 @@
-import { CalendarDaysIcon, PencilSquareIcon, TrashIcon } from '@heroicons/react/16/solid';
+import { CalendarDays, SquarePen, Trash } from 'lucide-react';
 import type { Category, Transaction } from '@/types/Transactions';
+import type { Dispatch, SetStateAction } from 'react';
 import { formatCurrency, normalizeCategory } from '../../../utils/format';
 
+import { ConfirmDialog } from '@/components/confirmDialog';
 import { TRANSACTION_CATEGORIES } from '@/utils/categoryMap';
+import fincheckApi from '@/api/fincheckApi';
+import { toast } from 'sonner';
 
 export default function TransactionItem({
     transaction,
+    setTransactions,
     categories,
 }: {
     transaction: Transaction;
+    setTransactions: Dispatch<SetStateAction<Transaction[]>>;
     categories: Category[];
 }) {
     const isExpense = transaction.type === 'expense';
@@ -32,7 +38,17 @@ export default function TransactionItem({
     }
 
     function handleDelete(id: string) {
-        console.log(id);
+        fincheckApi
+            .delete(`transactions/${id}`)
+            .then((res) => {
+                console.log(res);
+                setTransactions((transactions) => transactions.filter((t) => t.id !== id));
+                toast.success(' Transação excluída com sucesso 🗑️');
+            })
+            .catch((err) => {
+                console.error('Error deleting transaction', err?.response?.data ?? err.message);
+                toast.error('Erro ao excluir transação');
+            });
     }
 
     return (
@@ -42,7 +58,7 @@ export default function TransactionItem({
 
                 <div className="space-y-1">
                     <div className="flex items-center gap-1 text-xs text-gray-400">
-                        <CalendarDaysIcon className="w-4 h-4" />
+                        <CalendarDays className="w-4 h-4" />
                         <span>{transaction.date}</span>
                     </div>
                     <p className="text-textPrimary font-semibold leading-none">{transaction.title}</p>
@@ -60,16 +76,18 @@ export default function TransactionItem({
                         className="text-gray-400 hover:text-blue-600 transition"
                         title="Editar transação"
                     >
-                        <PencilSquareIcon className="w-5 h-5" />
+                        <SquarePen className="w-5 h-5" />
                     </button>
 
-                    <button
-                        onClick={() => handleDelete(transaction.id)}
-                        className="text-gray-400 hover:text-red-600 transition"
-                        title="Excluir transação"
+                    <ConfirmDialog
+                        title="Tem certeza que deseja deletar essa transação?"
+                        description="Essa ação irá remover o item permanentemente."
+                        onConfirm={() => handleDelete(transaction.id)}
                     >
-                        <TrashIcon className="w-5 h-5" />
-                    </button>
+                        <button className="text-gray-400 hover:text-red-600 transition" title="Excluir transação">
+                            <Trash className="w-5 h-5" />
+                        </button>
+                    </ConfirmDialog>
                 </div>
             </div>
         </li>
