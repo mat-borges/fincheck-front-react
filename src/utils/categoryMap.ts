@@ -7,13 +7,14 @@ import {
     Hospital,
     PartyPopper,
     PiggyBank,
-    ShoppingBag,
     ShoppingCart,
     Tag,
+    TvMinimalPlay,
+    Utensils,
 } from 'lucide-react';
 
 export const TRANSACTION_CATEGORIES = {
-    alimentacao: { label: 'Alimentação', icon: ShoppingBag },
+    alimentacao: { label: 'Alimentação', icon: Utensils },
     mercado: { label: 'Mercado', icon: ShoppingCart },
     salario: { label: 'Salário', icon: BanknoteArrowDown },
     lazer: { label: 'Lazer', icon: PartyPopper },
@@ -21,6 +22,7 @@ export const TRANSACTION_CATEGORIES = {
     poupanca: { label: 'Poupança', icon: PiggyBank },
     educacao: { label: 'Educação', icon: GraduationCap },
     saude: { label: 'Saúde', icon: Hospital },
+    assinaturas: { label: 'Assinaturas', icon: TvMinimalPlay },
     outros: { label: 'Outros', icon: Tag },
 } as const;
 
