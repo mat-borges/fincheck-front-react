@@ -47,7 +47,7 @@ export default function TransactionForm({
             .then((res) => {
                 setTransactions([...transactions, res.data as Transaction]);
                 onSubmit();
-                toast.success('Transação criada com sucesso');
+                toast.success(' Transação criada com sucesso 👍🏻');
                 setIsLoading(false);
             })
             .catch((err) => {
@@ -155,7 +155,7 @@ export default function TransactionForm({
                 />
             </div>
 
-            <Button type="submit" className={`w-full ${isLoading ? 'disabled' : ''} `}>
+            <Button type="submit" className="w-full" disabled={isLoading}>
                 {isLoading ? <LoadingSpinner /> : 'Salvar transação'}
             </Button>
         </form>
